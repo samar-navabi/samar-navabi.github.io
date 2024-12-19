@@ -14,7 +14,7 @@ public class TestRestExternalService
         RestTemplate restTemplate = new RestTemplate();
 
 
-        String url = "http://localhost:8080/project/projects";
+        String url = "http://localhost:8080/project/part/materials";
         String response = restTemplate.getForObject(url, String.class);
 
         System.out.println(response);
