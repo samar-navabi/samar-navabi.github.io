@@ -7,7 +7,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import samar.org.finantial_app.model.Part;
 import samar.org.finantial_app.model.Project;
+import samar.org.finantial_app.repo.PartRepo;
 import samar.org.finantial_app.repo.ProjectRepo;
 
 @Aspect
@@ -16,6 +18,9 @@ public class PartValidation
 {
     @Autowired
     ProjectRepo projectRepo;
+
+    @Autowired
+    PartRepo partRepo;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PartValidation.class);
 
@@ -32,5 +37,27 @@ public class PartValidation
         }
         Object obj = joinPoint.proceed(new Object[]{project});
         return obj;
+    }
+
+    //VALIDAR SE O PART JÁ EXISTE NA BASE DE DADOS
+    @Around("execution(* samar.org.finantial_app.service.PartService.addPart(..))")
+    public Object validatingPartName(ProceedingJoinPoint joinPoint) throws Throwable
+    {
+        //System.out.println("ID: " + prj.getId() + "---- Name : " + prj.getName());
+        Object[] args = joinPoint.getArgs();
+
+        if (args != null && args.length > 0 && args[0] instanceof String)
+        {
+            String partName = (String) args[0];
+
+            if(partRepo.existsByName(partName))
+            {
+                LOGGER.info("Part name already exists");
+                throw new IllegalArgumentException("Ja existe uma divisão do Projecto com o mesmo nome: " + partName);//joinPoint.finalize();
+            }
+        }
+
+        return joinPoint.proceed();
+
     }
 }
