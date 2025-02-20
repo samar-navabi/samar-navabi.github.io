@@ -55,6 +55,7 @@ public class ProjectController
         return partService.addPart(name,type,projectId);
     }
 
+
     @GetMapping("/part/parts")
     public ResponseEntity<List<Part>> getParts()
     {
@@ -72,6 +73,12 @@ public class ProjectController
     {
         //return null;
         return partMaterialsService.createPartMaterials(partMaterialsWrapper, partId);
+    }
+
+    @PostMapping("/part/materials/bulk/{partId}")
+    public ResponseEntity<String> createBulkPartMaterials(@RequestBody List<PartMaterialsWrapper> partMaterialsWrapper, @PathVariable int partId)
+    {
+        return partMaterialsService.bulkAddition(partMaterialsWrapper, partId);
     }
 
     @GetMapping("testing")

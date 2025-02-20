@@ -24,7 +24,6 @@ public class PartValidation
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PartValidation.class);
 
-
     //VALIDAR SE O PROJECTO JÁ EXISTE NA BASE DE DADOS
     @Around("execution(* samar.org.finantial_app.service.ProjectService.addProject(..)) && args(project)")
     public Object validatingInputs(ProceedingJoinPoint joinPoint, Project project) throws Throwable
@@ -49,15 +48,14 @@ public class PartValidation
         if (args != null && args.length > 0 && args[0] instanceof String)
         {
             String partName = (String) args[0];
+            String partType = (String) args[1];
 
-            if(partRepo.existsByName(partName))
+            if(partRepo.existsByName(partName) && partRepo.existsByType(partType))
             {
                 LOGGER.info("Part name already exists");
-                throw new IllegalArgumentException("Ja existe uma divisão do Projecto com o mesmo nome: " + partName);//joinPoint.finalize();
+                throw new IllegalArgumentException("Ja existe uma divisão do Projecto com o mesmo nome e typo: " + partName);
             }
         }
-
         return joinPoint.proceed();
-
     }
 }

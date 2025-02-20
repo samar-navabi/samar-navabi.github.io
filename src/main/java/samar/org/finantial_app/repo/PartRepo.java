@@ -11,4 +11,5 @@ public interface PartRepo extends JpaRepository<Part, Integer>
 {
     //@Query(value = "SELECT * FROM part p WHERE p.name=:name", nativeQuery = true)
     boolean existsByName(String name);
+    boolean existsByType(String type);
 }

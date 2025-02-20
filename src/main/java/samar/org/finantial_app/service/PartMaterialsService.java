@@ -10,6 +10,7 @@ import samar.org.finantial_app.model.PartMaterialsWrapper;
 import samar.org.finantial_app.repo.PartMaterialsRepo;
 import samar.org.finantial_app.repo.PartRepo;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -58,4 +59,32 @@ public class PartMaterialsService
     }
 
 
+    public ResponseEntity<String> bulkAddition(List<PartMaterialsWrapper> partMaterialsWrapper, int partId) {
+
+        List<PartMaterials> pm = new ArrayList<>();
+
+        try{
+            //getting the part object
+            Part part = partRepo.findById(partId).get();
+
+//            PartMaterials pm = new PartMaterials(partMaterialsWrapper.getName(), partMaterialsWrapper.getDescription(), partMaterialsWrapper.getQuantity(),
+//                    partMaterialsWrapper.getPriceUtd(), partMaterialsWrapper.getBuyDate(), part);
+
+            for(PartMaterialsWrapper partMaterials : partMaterialsWrapper){
+
+                pm.add(new PartMaterials(partMaterials.getName(), partMaterials.getDescription(), partMaterials.getQuantity(), partMaterials.getPriceUtd(),
+                        partMaterials.getBuyDate(), part));
+            }
+
+            //save the list of part materials in the repo
+            partMaterialsRepo.saveAll(pm);
+
+            return new ResponseEntity<>("All the Part Materials were Saved.", HttpStatus.OK);
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+        return new ResponseEntity<>("Some Error had occurred.", HttpStatus.BAD_REQUEST);
+    }
 }
